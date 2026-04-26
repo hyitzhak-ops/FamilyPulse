@@ -5,6 +5,13 @@ import { createClient } from "@/lib/supabase/client";
 import { he } from "@/lib/i18n/he";
 import { Button } from "@/components/ui/button";
 
+function oauthRedirectBase(): string {
+  const fromEnv = process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/$/, "");
+  if (fromEnv) return fromEnv;
+  if (typeof window !== "undefined") return window.location.origin;
+  return "";
+}
+
 export function GoogleSignInButton() {
   const [loading, setLoading] = useState(false);
   const supabase = createClient();
@@ -17,10 +24,11 @@ export function GoogleSignInButton() {
       disabled={loading}
       onClick={async () => {
         setLoading(true);
+        const base = oauthRedirectBase();
         const { error } = await supabase.auth.signInWithOAuth({
           provider: "google",
           options: {
-            redirectTo: `${window.location.origin}/auth/callback?next=/dashboard/view`,
+            redirectTo: `${base}/auth/callback?next=/dashboard/view`,
             queryParams: { prompt: "select_account" },
           },
         });

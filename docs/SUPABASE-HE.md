@@ -62,12 +62,25 @@ for each row execute procedure public.handle_new_user();
 ### ג) Supabase — כתובות חזרה לאפליקציה שלך
 
 1. [Authentication → URL Configuration](https://supabase.com/dashboard/project/reoggbwudljcgyxguoes/auth/url-configuration).
-2. תחת **Redirect URLs** הוסף:
+2. תחת **Redirect URLs** (רשימת כתובות מותרות ל־`redirect_to` אחרי OAuth) הוסף **את כל** הכתובות שבהן האפליקציה רצה, בדיוק כפי שמופיעות בדפדפן (כולל `https`, בלי סלאש מיותר בסוף):
 
-   - `http://localhost:3000/auth/callback`
-   - אחרי פריסה ל-Vercel גם: `https://YOUR-APP.vercel.app/auth/callback`
+   - `http://localhost:3000/auth/callback` (פיתוח)
+   - `https://<שם-הפרויקט>.vercel.app/auth/callback` (פרודקשן — החלף בכתובת האמיתית שלך, למשל מהדומיין ב־Vercel)
 
-3. **Site URL** אפשר להשאיר `http://localhost:3000` לפיתוח.
+3. **Site URL** — זו כתובת ברירת המחדל שאליה Supabase מפנה אם משהו לא תואם לרשימת ה־Redirect URLs או אם חסר `redirect_to` תקין.
+
+   - **לפיתוח בלבד:** אפשר `http://localhost:3000`.
+   - **אם האפליקציה בפרודקשן ב-Vercel:** חובה להגדיר **Site URL** לכתובת הפרודקשן, למשל `https://<שם>.vercel.app` (או דומיין מותאם אישית). אם משאירים כאן `localhost`, אחרי התחברות מ-Google לעיתים תופנה ל־`http://localhost:3000/...` גם כשגלשת מהאתר החי — וזה בדיוק התסמין שתיארת.
+
+4. (מומלץ ב-Vercel) בהגדרות הפרויקט ב-Vercel → **Environment Variables**, הוסף:
+
+   `NEXT_PUBLIC_SITE_URL=https://<שם>.vercel.app`  
+
+   (בלי סלאש בסוף.) כך גם אם יש proxy או מצב נדיר של מקור בקשה, כתובת ה־OAuth תישאר נכונה.
+
+5. ב־**Google Cloud Console** → ה־OAuth client → **Authorized JavaScript origins** — הוסף גם את כתובת ה־Vercel:
+
+   `https://<שם>.vercel.app`
 
 אחרי שמירה — חזור לאפליקציה, רענן, ונסה שוב **Continue with Google**.
 
